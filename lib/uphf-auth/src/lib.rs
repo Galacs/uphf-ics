@@ -13,3 +13,27 @@ pub async fn get_new_cas_execution_value() -> String {
     el.attr("value").unwrap().to_owned()
 }
 
+pub async fn get_cas_tgc_cookie(username: &str, password: &str, execution_value: &str) -> String {
+    // TODO: make it global
+    static APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
+
+    let client = reqwest::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()
+        .unwrap();
+    let form_params = [
+        ("username", username),
+        ("password", password),
+        ("execution", execution_value),
+        ("_eventId", "submit"),
+    ];
+
+    let response = client
+        .post("https://cas.uphf.fr/cas/login")
+        .form(&form_params)
+        .send()
+        .await
+        .unwrap();
+    let cookie = response.cookies().find(|cookie| cookie.name() == "TGC");
+    cookie.unwrap().value().to_owned()
+}
