@@ -12,3 +12,4 @@ pub async fn get_new_cas_execution_value() -> String {
     let el = doc.select(&selector).next().unwrap().value();
     el.attr("value").unwrap().to_owned()
 }
+
