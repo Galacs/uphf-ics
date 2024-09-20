@@ -1,0 +1,16 @@
+[package]
+name = "uphf-ics"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = [".", "lib/*"]
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+reqwest = "0.12"
+scraper = "0.20"
+
+[dependencies]
+tokio = { workspace = true }
+uphf-auth = { path = "lib/uphf-auth" }

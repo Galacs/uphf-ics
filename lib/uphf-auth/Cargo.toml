@@ -1,0 +1,9 @@
+[package]
+name = "uphf-auth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { workspace = true }
+reqwest = { workspace = true }
+scraper = { workspace = true }
