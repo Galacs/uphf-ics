@@ -13,17 +13,8 @@ pub async fn get_new_cas_execution_value() -> String {
     el.attr("value").unwrap().to_owned()
 }
 
-fn get_reqwest_client() -> reqwest::Client {
-    static APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
-
-    reqwest::Client::builder()
-        .user_agent(APP_USER_AGENT)
-        .build()
-        .unwrap()
-}
-
 pub async fn get_cas_tgc_cookie(username: &str, password: &str, execution_value: &str) -> String {
-    let client = get_reqwest_client();
+    let client = config::get_reqwest_client();
     let form_params = [
         ("username", username),
         ("password", password),
@@ -42,7 +33,7 @@ pub async fn get_cas_tgc_cookie(username: &str, password: &str, execution_value:
 }
 
 pub async fn get_edt_jsession_id(tgc_cookie: &str) -> String {
-    let client = get_reqwest_client();
+    let client = config::get_reqwest_client();
     let response = client
         .get("https://cas.uphf.fr/cas/login?service=https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/desktop/welcome.xhtml")
         .header("Cookie", format!("TGC={}", tgc_cookie))

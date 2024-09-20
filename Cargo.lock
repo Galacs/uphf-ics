@@ -103,6 +103,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "config"
+version = "0.1.0"
+dependencies = [
+ "reqwest",
+]
+
+[[package]]
 name = "cookie"
 version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1588,6 +1595,7 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 name = "uphf-auth"
 version = "0.1.0"
 dependencies = [
+ "config",
  "reqwest",
  "scraper",
  "tokio",
@@ -1597,6 +1605,8 @@ dependencies = [
 name = "uphf-ics"
 version = "0.1.0"
 dependencies = [
+ "config",
+ "scraper",
  "tokio",
  "uphf-auth",
 ]

@@ -13,4 +13,6 @@ scraper = "0.20"
 
 [dependencies]
 tokio = { workspace = true }
+scraper = { workspace = true }
 uphf-auth = { path = "lib/uphf-auth" }
+config = { path = "lib/config" }
