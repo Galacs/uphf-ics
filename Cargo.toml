@@ -17,6 +17,7 @@ snafu = { version = "0.8", features = ["futures"] }
 tokio = { workspace = true }
 scraper = { workspace = true }
 actix-web = { workspace = true }
+snafu = { workspace = true }
 actix-web-httpauth = "0.8"
 uphf-auth = { path = "lib/uphf-auth" }
 uphf-edt = { path = "lib/uphf-edt" }

@@ -3,35 +3,48 @@ use actix_web_httpauth::headers::{
     authorization::{self, Basic},
     www_authenticate,
 };
+use snafu::prelude::*;
 
 use uphf_edt::*;
 
-async fn download_ical(username: &str, password: &str) -> String {
+#[derive(Debug, Snafu)]
+pub enum IcsError {
+    #[snafu(context(true), display("no password provided"))]
+    NoPassword,
+    #[snafu(context(false), display("Auth error: {source}"))]
+    Auth { source: uphf_auth::AuthError },
+    #[snafu(context(false), display("Edt error: {source}"))]
+    Edt { source: uphf_edt::EdtError },
+}
+impl actix_web::error::ResponseError for IcsError {}
+
+async fn download_ical(username: &str, password: &str) -> Result<String, IcsError> {
     let execution_value = uphf_auth::get_new_cas_execution_value().await;
 
-    let cookie = uphf_auth::get_cas_tgc_cookie(username, password, &execution_value.unwrap()).await;
-    let jsession = uphf_edt::get_edt_jsession_id(&cookie.unwrap())
-        .await
-        .unwrap();
+    let cookie = uphf_auth::get_cas_tgc_cookie(username, password, &execution_value?).await?;
+    let jsession = uphf_edt::get_edt_jsession_id(&cookie).await?;
 
-    let body = get_edt_body(&jsession).await.unwrap();
+    let body = get_edt_body(&jsession).await?;
 
-    let a = get_ical_export_jid(&body).await.unwrap();
+    let jids = get_ical_export_jid(&body).await?;
 
-    download_edt_ics_file(&jsession, &a.0, &a.1).await.unwrap()
+    Ok(download_edt_ics_file(&jsession, &jids.0, &jids.1).await?)
 }
 
 #[get("/ics")]
-async fn hello(req: HttpRequest) -> impl Responder {
+async fn hello(req: HttpRequest) -> Result<impl Responder, IcsError> {
     // returns 401 with a www challenge if no http basic auth header is given
     let Ok(creds) = authorization::Authorization::<Basic>::parse(&req) else {
         let challenge = www_authenticate::basic::Basic::new();
-        return HttpResponse::Unauthorized()
+        return Ok(HttpResponse::Unauthorized()
             .insert_header(www_authenticate::WwwAuthenticate(challenge))
-            .finish();
+            .finish());
     };
-    let (username, password) = (creds.as_ref().user_id(), creds.as_ref().password().unwrap());
-    HttpResponse::Ok().body(download_ical(username, password).await)
+    let (username, password) = (
+        creds.as_ref().user_id(),
+        creds.as_ref().password().context(NoPassword)?,
+    );
+    Ok(HttpResponse::Ok().body(download_ical(username, password).await?))
 }
 
 #[actix_web::main]

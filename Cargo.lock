@@ -2139,6 +2139,7 @@ dependencies = [
  "actix-web-httpauth",
  "config",
  "scraper",
+ "snafu",
  "tokio",
  "uphf-auth",
  "uphf-edt",
