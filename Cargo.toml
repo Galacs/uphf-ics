@@ -10,10 +10,13 @@ members = [".", "lib/*"]
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", features = ["cookies"] }
 scraper = "0.20"
+actix-web = "4"
 
 [dependencies]
 tokio = { workspace = true }
 scraper = { workspace = true }
+actix-web = { workspace = true }
+actix-web-httpauth = "0.8"
 uphf-auth = { path = "lib/uphf-auth" }
 uphf-edt = { path = "lib/uphf-edt" }
 config = { path = "lib/config" }
