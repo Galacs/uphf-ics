@@ -15,4 +15,5 @@ scraper = "0.20"
 tokio = { workspace = true }
 scraper = { workspace = true }
 uphf-auth = { path = "lib/uphf-auth" }
+uphf-edt = { path = "lib/uphf-edt" }
 config = { path = "lib/config" }

@@ -54,7 +54,7 @@ async fn main() {
 
     let cookie = dbg!(uphf_auth::get_cas_tgc_cookie("", "", &execution_value).await);
 
-    let jsession = dbg!(uphf_auth::get_edt_jsession_id(&cookie).await);
+    let jsession = dbg!(uphf_edt::get_edt_jsession_id(&cookie).await);
 
     let body = get_edt_body(&jsession).await;
 

@@ -1,0 +1,8 @@
+[package]
+name = "uphf-edt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+config = { path = "../config/" }
+reqwest = { workspace = true }

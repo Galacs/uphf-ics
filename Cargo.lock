@@ -1602,6 +1602,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "uphf-edt"
+version = "0.1.0"
+dependencies = [
+ "config",
+ "reqwest",
+]
+
+[[package]]
 name = "uphf-ics"
 version = "0.1.0"
 dependencies = [
@@ -1609,6 +1617,7 @@ dependencies = [
  "scraper",
  "tokio",
  "uphf-auth",
+ "uphf-edt",
 ]
 
 [[package]]
