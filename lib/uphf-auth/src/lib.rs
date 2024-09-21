@@ -54,6 +54,7 @@ pub async fn get_cas_tgc_cookie(
         .form(&form_params)
         .send()
         .await?;
+    let response = response.error_for_status()?;
     let cookie = response.cookies().find(|cookie| cookie.name() == "TGC");
     Ok(cookie
         .context(CookieParse {
