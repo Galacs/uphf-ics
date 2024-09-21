@@ -9,8 +9,8 @@ use uphf_edt::*;
 async fn download_ical(username: &str, password: &str) -> String {
     let execution_value = uphf_auth::get_new_cas_execution_value().await;
 
-    let cookie = uphf_auth::get_cas_tgc_cookie(username, password, &execution_value).await;
-    let jsession = uphf_edt::get_edt_jsession_id(&cookie).await;
+    let cookie = uphf_auth::get_cas_tgc_cookie(username, password, &execution_value.unwrap()).await;
+    let jsession = uphf_edt::get_edt_jsession_id(&cookie.unwrap()).await;
 
     let body = get_edt_body(&jsession).await;
 

@@ -7,4 +7,5 @@ edition = "2021"
 tokio = { workspace = true }
 reqwest = { workspace = true }
 scraper = { workspace = true }
+snafu = { workspace = true }
 config = { path = "../config" }
