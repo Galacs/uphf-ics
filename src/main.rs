@@ -10,13 +10,15 @@ async fn download_ical(username: &str, password: &str) -> String {
     let execution_value = uphf_auth::get_new_cas_execution_value().await;
 
     let cookie = uphf_auth::get_cas_tgc_cookie(username, password, &execution_value.unwrap()).await;
-    let jsession = uphf_edt::get_edt_jsession_id(&cookie.unwrap()).await;
+    let jsession = uphf_edt::get_edt_jsession_id(&cookie.unwrap())
+        .await
+        .unwrap();
 
-    let body = get_edt_body(&jsession).await;
+    let body = get_edt_body(&jsession).await.unwrap();
 
-    let a = get_ical_export_jid(&body).await;
+    let a = get_ical_export_jid(&body).await.unwrap();
 
-    download_edt_ics_file(&jsession, &a.0, &a.1).await
+    download_edt_ics_file(&jsession, &a.0, &a.1).await.unwrap()
 }
 
 #[get("/ics")]

@@ -7,3 +7,4 @@ edition = "2021"
 config = { path = "../config/" }
 reqwest = { workspace = true }
 scraper = { workspace = true }
+snafu = { workspace = true }
