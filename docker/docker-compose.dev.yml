@@ -1,0 +1,7 @@
+services:
+  uphf-ics:
+    image: galacs/uphf-ics
+    build: ../
+    restart: unless-stopped
+    ports:
+      - 8080:8080
