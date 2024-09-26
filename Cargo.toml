@@ -15,12 +15,18 @@ reqwest = { version = "0.12", default-features = false, features = [
 scraper = "0.20"
 actix-web = { version = "4", features = ["rustls"] }
 snafu = "0.8"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+tracing-actix-web = "0.7"
 
 [dependencies]
 tokio = { workspace = true }
 scraper = { workspace = true }
 actix-web = { workspace = true }
 snafu = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-actix-web = { workspace = true }
 actix-web-httpauth = "0.8"
 uphf-auth = { path = "lib/uphf-auth" }
 uphf-edt = { path = "lib/uphf-edt" }
