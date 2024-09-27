@@ -13,6 +13,7 @@ pub enum EdtError {
     UrlParse { msg: String },
 }
 
+#[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn get_edt_jsession_id(tgc_cookie: &str) -> Result<String, EdtError> {
     let client = config::get_reqwest_client();
     let response = client
@@ -31,6 +32,7 @@ pub async fn get_edt_jsession_id(tgc_cookie: &str) -> Result<String, EdtError> {
         .to_owned())
 }
 
+#[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn get_edt_body(jsession_id: &str) -> Result<String, EdtError> {
     let client = config::get_reqwest_client();
     let response = client
@@ -41,6 +43,7 @@ pub async fn get_edt_body(jsession_id: &str) -> Result<String, EdtError> {
     Ok(response.text().await?)
 }
 
+#[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn get_ical_export_jid(body: &str) -> Result<(String, String), EdtError> {
     let doc = scraper::Html::parse_document(body);
 
@@ -77,6 +80,7 @@ pub async fn get_ical_export_jid(body: &str) -> Result<(String, String), EdtErro
     Ok((a, b))
 }
 
+#[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn download_edt_ics_file(
     jsession_id: &str,
     form: &str,

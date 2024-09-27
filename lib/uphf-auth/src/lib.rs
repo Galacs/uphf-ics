@@ -13,6 +13,7 @@ pub enum AuthError {
     CookieParse { msg: String },
 }
 
+#[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn get_new_cas_execution_value() -> Result<String, AuthError> {
     let response = reqwest::get("https://cas.uphf.fr/cas/login").await?;
     let response = response.error_for_status()?;
@@ -36,6 +37,7 @@ pub async fn get_new_cas_execution_value() -> Result<String, AuthError> {
         .to_owned())
 }
 
+#[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn get_cas_tgc_cookie(
     username: &str,
     password: &str,

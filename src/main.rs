@@ -18,6 +18,7 @@ pub enum IcsError {
 }
 impl actix_web::error::ResponseError for IcsError {}
 
+#[cfg_attr(feature = "instrument", tracing::instrument)]
 async fn download_ical(username: &str, password: &str) -> Result<String, IcsError> {
     let execution_value = uphf_auth::get_new_cas_execution_value().await?;
 
@@ -51,17 +52,17 @@ async fn hello(req: HttpRequest) -> Result<impl Responder, IcsError> {
 async fn main() -> std::io::Result<()> {
     #[cfg(feature = "instrument")]
     {
-        let subscriber = tracing_subscriber::FmtSubscriber::new();
-        tracing::subscriber::set_global_default(subscriber).unwrap();
+        use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+        tracing_subscriber::registry()
+            .with(EnvFilter::from_default_env())
+            .with(fmt::layer().pretty())
+            .init();
     }
 
     HttpServer::new(|| {
         let app = App::new().service(hello);
         #[cfg(feature = "instrument")]
-        {
-            app.wrap(tracing_actix_web::TracingLogger::default())
-        }
-        #[cfg(not(feature = "instrument"))]
+        let app = app.wrap(tracing_actix_web::TracingLogger::default());
         app
     })
     .bind(("0.0.0.0", 8080))?

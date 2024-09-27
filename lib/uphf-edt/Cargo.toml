@@ -3,8 +3,12 @@ name = "uphf-edt"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+instrument = ["tracing"]
+
 [dependencies]
 config = { path = "../config/" }
 reqwest = { workspace = true }
 scraper = { workspace = true }
 snafu = { workspace = true }
+tracing = { workspace = true, optional = true }
