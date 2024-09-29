@@ -59,6 +59,12 @@ async fn main() -> std::io::Result<()> {
         let tracer = opentelemetry_otlp::new_pipeline()
             .tracing()
             .with_exporter(otlp_exporter)
+            .with_trace_config(opentelemetry_sdk::trace::Config::default().with_resource(
+                opentelemetry_sdk::Resource::new([opentelemetry::KeyValue::new(
+                    "service.name",
+                    "uphf-ics",
+                )]),
+            ))
             .install_batch(opentelemetry_sdk::runtime::Tokio)
             .unwrap()
             .tracer("uphf-ics");
