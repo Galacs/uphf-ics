@@ -52,10 +52,21 @@ async fn hello(req: HttpRequest) -> Result<impl Responder, IcsError> {
 async fn main() -> std::io::Result<()> {
     #[cfg(feature = "instrument")]
     {
+        use opentelemetry::trace::TracerProvider;
         use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+
+        let otlp_exporter = opentelemetry_otlp::new_exporter().tonic();
+        let tracer = opentelemetry_otlp::new_pipeline()
+            .tracing()
+            .with_exporter(otlp_exporter)
+            .install_batch(opentelemetry_sdk::runtime::Tokio)
+            .unwrap()
+            .tracer("uphf-ics");
+
         tracing_subscriber::registry()
             .with(EnvFilter::from_default_env())
             .with(fmt::layer().pretty())
+            .with(tracing_opentelemetry::layer().with_tracer(tracer))
             .init();
     }
 

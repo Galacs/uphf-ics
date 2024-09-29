@@ -11,6 +11,10 @@ instrument = [
   "dep:tracing",
   "dep:tracing-subscriber",
   "dep:tracing-actix-web",
+  "dep:tracing-opentelemetry",
+  "dep:opentelemetry",
+  "dep:opentelemetry_sdk",
+  "dep:opentelemetry-otlp",
   "uphf-auth/instrument",
   "uphf-edt/instrument",
 ]
@@ -28,6 +32,10 @@ snafu = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["registry", "env-filter"] }
 tracing-actix-web = "0.7"
+tracing-opentelemetry = "0.26"
+opentelemetry = "0.25"
+opentelemetry_sdk = { version = "0.25", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.25", features = ["grpc-tonic"] }
 
 [dependencies]
 tokio = { workspace = true }
@@ -37,6 +45,10 @@ snafu = { workspace = true }
 tracing = { workspace = true, optional = true }
 tracing-subscriber = { workspace = true, optional = true }
 tracing-actix-web = { workspace = true, optional = true }
+tracing-opentelemetry = { workspace = true, optional = true }
+opentelemetry = { workspace = true, optional = true }
+opentelemetry_sdk = { workspace = true, optional = true }
+opentelemetry-otlp = { workspace = true, optional = true }
 actix-web-httpauth = "0.8"
 uphf-auth = { path = "lib/uphf-auth" }
 uphf-edt = { path = "lib/uphf-edt" }
