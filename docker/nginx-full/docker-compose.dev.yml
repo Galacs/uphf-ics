@@ -1,0 +1,25 @@
+services:
+  uphf-ics:
+    image: galacs/uphf-ics
+    build: ../../
+    restart: unless-stopped
+    environment:
+      - RUST_LOG=uphf_ics=DEBUG,uphf_auth=DEBUG,INFO
+      - UPHF_ICS_OTLP_ENDPOINT=http://jaeger:4317
+
+  reverse-proxy:
+    image: nginx:otel
+    volumes:
+      - ./uphf-ics.conf.template:/etc/nginx/templates/uphf-ics.conf.template
+    ports:
+      - "80:8080"
+    environment:
+      - NGINX_CACHE_SIZE=10m
+      - NGINX_CACHE_MAX_AGE=180m
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - 4317:4317 # OpenTelemetry Protocol (OTLP) over gRPC
+      - 16686:16686 # UI port
+      - 14269:14269 # collector admin port: health check at / and metrics at /metrics
