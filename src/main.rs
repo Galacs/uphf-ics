@@ -53,9 +53,12 @@ async fn main() -> std::io::Result<()> {
     #[cfg(feature = "instrument")]
     {
         use opentelemetry::trace::TracerProvider;
+        use opentelemetry_otlp::WithExportConfig;
         use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
-        let otlp_exporter = opentelemetry_otlp::new_exporter().tonic();
+        let otlp_exporter = opentelemetry_otlp::new_exporter()
+            .tonic()
+            .with_endpoint(std::env::var("UPHF_ICS_OTLP_ENDPOINT").unwrap_or_default());
         let tracer = opentelemetry_otlp::new_pipeline()
             .tracing()
             .with_exporter(otlp_exporter)
