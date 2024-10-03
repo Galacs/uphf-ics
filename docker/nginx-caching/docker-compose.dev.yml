@@ -1,0 +1,15 @@
+services:
+  uphf-ics:
+    image: galacs/uphf-ics
+    build: ../../
+    restart: unless-stopped
+
+  reverse-proxy:
+    image: nginx:otel
+    volumes:
+      - ./uphf-ics.conf.template:/etc/nginx/templates/uphf-ics.conf.template
+    ports:
+      - "80:8080"
+    environment:
+      - NGINX_CACHE_SIZE=10m
+      - NGINX_CACHE_MAX_AGE=180m
