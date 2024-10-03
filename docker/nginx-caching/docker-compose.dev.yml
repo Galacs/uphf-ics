@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
 
   reverse-proxy:
-    image: nginx:otel
+    image: nginx
     volumes:
       - ./uphf-ics.conf.template:/etc/nginx/templates/uphf-ics.conf.template
     ports:
