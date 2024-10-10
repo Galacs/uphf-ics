@@ -1,4 +1,5 @@
 use scraper::error::SelectorErrorKind;
+use secrecy::{ExposeSecret, SecretBox, SecretString};
 use snafu::prelude::*;
 
 #[derive(Debug, Snafu)]
@@ -14,30 +15,34 @@ pub enum EdtError {
 }
 
 #[cfg_attr(feature = "instrument", tracing::instrument)]
-pub async fn get_edt_jsession_id(tgc_cookie: &str) -> Result<String, EdtError> {
+pub async fn get_edt_jsession_id(tgc_cookie: SecretBox<str>) -> Result<SecretBox<str>, EdtError> {
     let client = config::get_reqwest_client();
     let response = client
         .get("https://cas.uphf.fr/cas/login?service=https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/desktop/welcome.xhtml")
-        .header("Cookie", format!("TGC={}", tgc_cookie))
+        .header("Cookie", format!("TGC={}", tgc_cookie.expose_secret()))
         .send()
         .await?;
     // TODO: maybe try to get JSESSIONID from the header in a previous redirect?
     let url = response.url().to_string();
-    Ok(url
-        .split("=")
-        .last()
-        .context(UrlParse {
-            msg: "no JSESSIONID in redirect url",
-        })?
-        .to_owned())
+    Ok(SecretString::from(
+        url.split("=")
+            .last()
+            .context(UrlParse {
+                msg: "no JSESSIONID in redirect url",
+            })?
+            .to_owned(),
+    ))
 }
 
 #[cfg_attr(feature = "instrument", tracing::instrument)]
-pub async fn get_edt_body(jsession_id: &str) -> Result<String, EdtError> {
+pub async fn get_edt_body(jsession_id: SecretBox<str>) -> Result<String, EdtError> {
     let client = config::get_reqwest_client();
     let response = client
         .get("https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/desktop/welcome.xhtml")
-        .header("Cookie", format!("JSESSIONID={}", jsession_id))
+        .header(
+            "Cookie",
+            format!("JSESSIONID={}", jsession_id.expose_secret()),
+        )
         .send()
         .await?;
     Ok(response.text().await?)
@@ -82,7 +87,7 @@ pub async fn get_ical_export_jid(body: &str) -> Result<(String, String), EdtErro
 
 #[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn download_edt_ics_file(
-    jsession_id: &str,
+    jsession_id: SecretBox<str>,
     form: &str,
     idcl: &str,
 ) -> Result<String, EdtError> {
@@ -96,7 +101,10 @@ pub async fn download_edt_ics_file(
     let response = client
         .post("https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/desktop/welcome.xhtml")
         .form(&form_params)
-        .header("Cookie", format!("JSESSIONID={}", jsession_id))
+        .header(
+            "Cookie",
+            format!("JSESSIONID={}", jsession_id.expose_secret()),
+        )
         .send()
         .await?;
 

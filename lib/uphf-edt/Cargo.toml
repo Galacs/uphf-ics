@@ -12,3 +12,4 @@ reqwest = { workspace = true }
 scraper = { workspace = true }
 snafu = { workspace = true }
 tracing = { workspace = true, optional = true }
+secrecy = { workspace = true }

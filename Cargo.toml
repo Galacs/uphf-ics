@@ -36,6 +36,7 @@ tracing-opentelemetry = "0.26"
 opentelemetry = "0.25"
 opentelemetry_sdk = { version = "0.25", features = ["rt-tokio"] }
 opentelemetry-otlp = { version = "0.25", features = ["grpc-tonic"] }
+secrecy = "0.10"
 
 [dependencies]
 tokio = { workspace = true }
@@ -50,6 +51,7 @@ opentelemetry = { workspace = true, optional = true }
 opentelemetry_sdk = { workspace = true, optional = true }
 opentelemetry-otlp = { workspace = true, optional = true }
 actix-web-httpauth = "0.8"
+secrecy = { workspace = true }
 uphf-auth = { path = "lib/uphf-auth" }
 uphf-edt = { path = "lib/uphf-edt" }
 config = { path = "lib/config" }

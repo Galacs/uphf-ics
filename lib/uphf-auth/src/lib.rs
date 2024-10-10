@@ -1,4 +1,5 @@
 use scraper::error::SelectorErrorKind;
+use secrecy::{ExposeSecret, SecretBox, SecretString};
 use snafu::prelude::*;
 
 #[derive(Debug, Snafu)]
@@ -40,13 +41,13 @@ pub async fn get_new_cas_execution_value() -> Result<String, AuthError> {
 #[cfg_attr(feature = "instrument", tracing::instrument)]
 pub async fn get_cas_tgc_cookie(
     username: &str,
-    password: &str,
+    password: SecretBox<str>,
     execution_value: &str,
-) -> Result<String, AuthError> {
+) -> Result<SecretBox<str>, AuthError> {
     let client = config::get_reqwest_client();
     let form_params = [
         ("username", username),
-        ("password", password),
+        ("password", password.expose_secret()),
         ("execution", execution_value),
         ("_eventId", "submit"),
     ];
@@ -58,10 +59,9 @@ pub async fn get_cas_tgc_cookie(
         .await?;
     let response = response.error_for_status()?;
     let cookie = response.cookies().find(|cookie| cookie.name() == "TGC");
-    Ok(cookie
-        .context(CookieParse {
-            msg: "no TGC cookie",
-        })?
-        .value()
-        .to_owned())
+    let cookie = cookie.context(CookieParse {
+        msg: "no TGC cookie",
+    })?;
+
+    Ok(SecretString::from(cookie.value().to_owned()))
 }

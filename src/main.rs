@@ -3,6 +3,7 @@ use actix_web_httpauth::headers::{
     authorization::{self, Basic},
     www_authenticate,
 };
+use secrecy::{SecretBox, SecretString};
 use snafu::prelude::*;
 
 use uphf_edt::*;
@@ -19,17 +20,17 @@ pub enum IcsError {
 impl actix_web::error::ResponseError for IcsError {}
 
 #[cfg_attr(feature = "instrument", tracing::instrument)]
-async fn download_ical(username: &str, password: &str) -> Result<String, IcsError> {
+async fn download_ical(username: &str, password: SecretBox<str>) -> Result<String, IcsError> {
     let execution_value = uphf_auth::get_new_cas_execution_value().await?;
 
     let cookie = uphf_auth::get_cas_tgc_cookie(username, password, &execution_value).await?;
-    let jsession = uphf_edt::get_edt_jsession_id(&cookie).await?;
+    let jsession = uphf_edt::get_edt_jsession_id(cookie).await?;
 
-    let body = get_edt_body(&jsession).await?;
+    let body = get_edt_body(jsession.clone()).await?;
 
     let jids = get_ical_export_jid(&body).await?;
 
-    Ok(download_edt_ics_file(&jsession, &jids.0, &jids.1).await?)
+    Ok(download_edt_ics_file(jsession, &jids.0, &jids.1).await?)
 }
 
 #[get("/ics")]
@@ -43,7 +44,7 @@ async fn hello(req: HttpRequest) -> Result<impl Responder, IcsError> {
     };
     let (username, password) = (
         creds.as_ref().user_id(),
-        creds.as_ref().password().context(NoPassword)?,
+        SecretString::from(creds.as_ref().password().context(NoPassword)?),
     );
     Ok(HttpResponse::Ok().body(download_ical(username, password).await?))
 }
