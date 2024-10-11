@@ -10,6 +10,7 @@ services:
   reverse-proxy:
     image: nginx:otel
     volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
       - ./uphf-ics.conf.template:/etc/nginx/templates/uphf-ics.conf.template
     ports:
       - "80:8080"

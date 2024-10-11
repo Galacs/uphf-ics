@@ -4,6 +4,8 @@ otel_exporter {
     endpoint jaeger:4317;
 }
 
+otel_service_name "uphf-ics:nginx";
+
 server {
     listen       8080;
 
@@ -14,9 +16,9 @@ server {
     proxy_cache_valid 500 401   10s;
 
     location / {
-	                otel_trace         on;
-            otel_trace_context inject;
-	    otel_span_name $request_uri
+        otel_trace         on;
+        otel_trace_context inject;
+        otel_span_name "/ics";
         proxy_cache  cache;
         proxy_set_header Host             $host;
         proxy_set_header X-Real-IP        $remote_addr;
