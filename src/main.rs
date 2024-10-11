@@ -37,6 +37,7 @@ async fn download_ical(username: &str, password: SecretBox<str>) -> Result<Strin
 async fn hello(req: HttpRequest) -> Result<impl Responder, IcsError> {
     // returns 401 with a www challenge if no http basic auth header is given
     let Ok(creds) = authorization::Authorization::<Basic>::parse(&req) else {
+        tracing::info!("no authorization header sent, replying with challenge");
         let challenge = www_authenticate::basic::Basic::new();
         return Ok(HttpResponse::Unauthorized()
             .insert_header(www_authenticate::WwwAuthenticate(challenge))
